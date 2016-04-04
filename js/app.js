@@ -80,13 +80,10 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
         ref.authAnonymously(function(error, authData) {  
             var person = allPeople.child(authData.uid);
             $scope.cart = $firebaseArray(person);
-        }, {
-            remember: "sessionOnly"
-        });
-        
-        $scope.cartObject = {};
-        
-        $scope.addToCart = function(bean, price) {
+            
+            $scope.cartObject = {};
+            
+            $scope.addToCart = function(bean, price) {
             //push cartobject to the same user
             $scope.person.$add({
                 bean: bean,
@@ -97,6 +94,10 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
                 $scope.cartObject = {};
             })
         };
+        }, {
+            remember: "sessionOnly"
+        });
+        
     }]);
     // .controller("CartCtrl", ["$scope", "$http", "$firebaseArray", "$firebaseObject", function($scope, $http, $firebaseArray, $firebaseObject) {
         
