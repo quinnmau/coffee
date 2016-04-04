@@ -1,0 +1,20 @@
+<div class="order-bean" ng-controller="OrdersCtrl">
+    <label> 
+        Browse Beans:
+        <input type="text" name="bean-name" ng-model="search" />
+    </label>
+    <table class="bean-table">
+        <tr>
+            <th></th>
+            <th><strong>Beans</strong></th>
+            <th><strong>Origin</strong></th>
+            <th><strong>Price</strong></th>
+        </tr>
+        <tr ng-repeat="bean in beans | orderBy:'name' | filter:search">
+            <td><img src={{bean.image}} alt="bean"/></td>
+            <td><a ui-sref="detail({id: bean.id})" >{{bean.name}}</a></td>
+            <td>{{bean.grower.name}}</td>
+            <td>{{bean.price | currency: '$'}}/lb</td>
+        </tr>
+    </table>
+</div>
