@@ -75,18 +75,20 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
         });
         
         var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
-        
-        var cartRef = ref.child("cart");
-        var usersRef = ref.child("users");
-        
-        $scope.cart = $firebaseArray(cartRef);
-        $scope.users = $firebaseObject(usersRef);
+        var allPeople = ref.child("allPeople");
+        $scope.allPeople = $firebaseObject(allPeople);
+        ref.authAnonymously(function(error, authData) {  
+            var person = allPeople.child(authData.uid);
+            $scope.cart = $firebaseArray(person);
+        }, {
+            remember: "sessionOnly"
+        });
         
         $scope.cartObject = {};
         
         $scope.addToCart = function(bean, price) {
             //push cartobject to the same user
-            $scope.cart.$add({
+            $scope.person.$add({
                 bean: bean,
                 price: price,
                 grind: $scope.cartObject.grind,
@@ -99,5 +101,3 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
     // .controller("CartCtrl", ["$scope", "$http", "$firebaseArray", "$firebaseObject", function($scope, $http, $firebaseArray, $firebaseObject) {
         
     // }]);
-    
-
