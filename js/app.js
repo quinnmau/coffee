@@ -58,9 +58,19 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
        
         $http.get("data/products.json").then(function(response) {
             $scope.beans = response.data;
-        });   
+        });  
+        
+        var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
+        
+        ref.authAnonymously(function(error, authData) {
+            if (error) {
+                console.log("Login Failed!", error);
+            } else {
+                console.log("Authenticated successfully with payload:", authData);
+            }
+        }); 
     }])
-    .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "$firebaseArray", "$firebaseObject", function($scope, $stateParams, $http, $filter, $firebaseArray, $firebaseObject) {
+    .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "$firebaseArray", "$firebaseObject", "$firebaseAuth", function($scope, $stateParams, $http, $filter, $firebaseArray, $firebaseObject, $firebaseAuth) {
         $scope.iden = $stateParams.id;
         
         $scope.grinds = ["Whole Bean", "Espresso", "French Press", "Cone Drip", "Filter", "Flat Bottom filter"];
@@ -74,29 +84,20 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             }, true)[0];
         });
         
-        var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
-        var allPeople = ref.child("allPeople");
-        $scope.allPeople = $firebaseObject(allPeople);
-        ref.authAnonymously(function(error, authData) {  
-            var person = allPeople.child(authData.uid);
-            $scope.cart = $firebaseArray(person);
-            
-            $scope.cartObject = {};
-            
-            $scope.addToCart = function(bean, price) {
-            //push cartobject to the same user
-            $scope.person.$add({
-                bean: bean,
-                price: price,
-                grind: $scope.cartObject.grind,
-                quantity: $scope.cartObject.quantity
-            }).then(function() {
-                $scope.cartObject = {};
-            })
-        };
-        }, {
+        
+        /*var users = ref.child('users');
+        $scope.users = $firebaseObject(users);
+        
+        $scope.authObject = $firebaseAuth(ref);
+        var authData = $scope.authObject.$getAuth();
+        
+        if (authData) {
+            $scope.userId = authData.uid;
+        }
+        ref.authAnonymously(function(error, authData) { console.log(authData.uid) }, {
             remember: "sessionOnly"
-        });
+        });*/
+        
         
     }]);
     // .controller("CartCtrl", ["$scope", "$http", "$firebaseArray", "$firebaseObject", function($scope, $http, $firebaseArray, $firebaseObject) {
