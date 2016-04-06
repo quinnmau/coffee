@@ -89,7 +89,7 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
         };
         $scope.addToCart = function() {
             user.addToCart($scope.newItem);
-            $scope.allPeople.user.currentUser = user.cart;
+            $scope.allPeople[user.currentUser] = user.cart;
             usersRef.$save();
             console.log($scope.allPeople);
         }
