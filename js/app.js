@@ -60,7 +60,7 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             $scope.beans = response.data;
         });   
     }])
-    .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "user", function($scope, $stateParams, $http, $filter, user) {
+    .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "user", "$firebaseObject", function($scope, $stateParams, $http, $filter, user, $firebaseObject) {
         $scope.iden = $stateParams.id;
         
         var ref = new Firebase('https://glaring-inferno-9704.firebaseio.com');
