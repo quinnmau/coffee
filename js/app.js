@@ -1,34 +1,3 @@
-// "use strict";
-
-// var app1 = angular.module("app1", ["ngSanitize", "ui.router"]);
-
-// app1.config(function($stateprovider, $urlRouterProvider) {
-//     $urlRouterProvider.otherwise("/");
-//     $stateprovider
-//         .state("home", {
-//             url: "/home",
-//             templateUrl: "partials/home.html"
-//         })
-        
-//         .state("order", {
-//             url: "/order",
-//             templateUrl: "partials/order.html"
-//         })
-        
-//         .state("cart", {
-//             url: "/cart",
-//             templateUrl: "partials/cart.html"
-//         })
-        
-//         .state("details", {
-//             url: "/bean/{id}",
-//             templateUrl: "partials/bean.html"
-//         });
-// })
-// .controller("MyCtrl", function($scope) {
-//     $scope.first = 1;
-// });
-
 'use strict';
 
 
@@ -94,6 +63,11 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
     .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "user", function($scope, $stateParams, $http, $filter, user) {
         $scope.iden = $stateParams.id;
         
+        var ref = new Firebase('https://glaring-inferno-9704.firebaseio.com');
+        var usersRef = ref.child('allPeople');
+        
+        $scope.allPeople = $firebaseObject(usersRef);
+        
         $scope.grinds = ["Whole Bean", "Espresso", "French Press", "Cone Drip", "Filter", "Flat Bottom filter"];
         $scope.grind = "Whole Bean";
         $scope.quantity = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
@@ -113,7 +87,11 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             $scope.newItem['quantity'] = $scope.cartObject.quantity;
             console.log($scope.newItem);
         };
-        $scope.addToCart = user.addToCart($scope.newItem);
+        $scope.addToCart = function() {
+            user.addToCart($scope.newItem);
+            $scope.allPeople.user.currentUser = user.cart;
+            usersRef.$save();
+        }
         
     }]);
     // .controller("CartCtrl", ["$scope", "$http", "$firebaseArray", "$firebaseObject", function($scope, $http, $firebaseArray, $firebaseObject) {
