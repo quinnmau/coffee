@@ -35,7 +35,7 @@
 var myApp = angular.module('dawgApp', ['ngSanitize', 'ui.router', 'firebase']);
 
 myApp.service("user", function() {
-    this.currentUser = '';
+    this.currentUser = [];
 });
 
 myApp.config(function($stateProvider, $urlRouterProvider) {
@@ -58,16 +58,19 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
           templateUrl: "partials/order.html"
         });
     })
-    .controller("MainCtrl", ["user", "$firebaseAuth", function(user, $firebaseAuth) {
+    .controller("MainCtrl", ["user", function(user) {
         var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
-        
-        if (user.currentUser == '') {
+        if (localStorage["user"] == null) {
             ref.authAnonymously(function(error, authData) {
                 if (error) {
-                    console.log("Login Failed!", error);
+                    console.log(error);
                 } else {
-                    console.log(authData);
+                    localStorage["user"] = authData.uid;
+                    user.currentUser = authData.uid;
+                    console.log(authData.uid);
                 }
+            }, {
+                remember: "sessionOnly"
             });
         }
     }])
