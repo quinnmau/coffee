@@ -35,7 +35,8 @@
 var myApp = angular.module('dawgApp', ['ngSanitize', 'ui.router', 'firebase']);
 
 myApp.service("user", function() {
-    this.currentUser = [];
+    //this.currentUser = [];
+    this.currentUser = '';
 });
 
 myApp.config(function($stateProvider, $urlRouterProvider) {
@@ -58,19 +59,35 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
           templateUrl: "partials/order.html"
         });
     })
-    .controller("MainCtrl", ["user", function(user) {
+    .controller("MainCtrl", ["user", "$firebaseAuth","$scope", function(user, $firebaseAuth, $scope) {
         var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
-        if (localStorage["user"] == null) {
+        // if (localStorage["user"] == null) {
+        //     ref.authAnonymously(function(error, authData) {
+        //         if (error) {
+        //             console.log(error);
+        //         } else {
+        //             localStorage["user"] = authData.uid;
+        //             user.currentUser = authData.uid;
+        //             console.log(authData.uid);
+        //         }
+        //     }, {
+        //         remember: "sessionOnly"
+        //     });
+        // }
+        $scope.authObj = $firebaseAuth(ref);
+        var authData1 = $scope.authObj.$getAuth();
+        if (authData1) {
+            user.currentUser = authData1.uid;
+            console.log(user.currentUser);
+        } else {
             ref.authAnonymously(function(error, authData) {
                 if (error) {
                     console.log(error);
                 } else {
-                    localStorage["user"] = authData.uid;
-                    user.currentUser = authData.uid;
-                    console.log(authData.uid);
+                    authData1 = authData;
+                    user.currentUser = authData1.uid;
+                    console.log(user.currentUser);
                 }
-            }, {
-                remember: "sessionOnly"
             });
         }
     }])
