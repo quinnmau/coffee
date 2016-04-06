@@ -17,7 +17,7 @@
                 <select name="grinds" id="grinds" class="form-control" ng-model="cartObject.grind" ng-options="item as item for item in grinds"></select>
                 <label for="quantity">Quantity</label>
                 <select name="quantity" id="quantity" class="form-control" ng-model="cartObject.quantity" ng-options="item as item for item in quantity"></select>
-                <button type="submit" class="btn btn-primary" ng-if="bean" ng-click="addToCart(bean.name, bean.price)">Add To Cart</button>
+                <button type="submit" class="btn btn-primary" ng-if="bean" ng-click="getBeanAndPrice(bean.name, bean.price)">Add To Cart</button>
             </div>
         </form>
     </section>
