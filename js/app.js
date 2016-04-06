@@ -37,6 +37,11 @@ var myApp = angular.module('dawgApp', ['ngSanitize', 'ui.router', 'firebase']);
 myApp.service("user", function() {
     //this.currentUser = [];
     this.currentUser = '';
+    this.cart = [];
+    this.addToCart = function(newCartObject) {
+        this.cart.push(newCartObject);
+        console.log(this.cart);
+    }
 });
 
 myApp.config(function($stateProvider, $urlRouterProvider) {
@@ -61,19 +66,6 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
     })
     .controller("MainCtrl", ["user", "$firebaseAuth","$scope", function(user, $firebaseAuth, $scope) {
         var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
-        // if (localStorage["user"] == null) {
-        //     ref.authAnonymously(function(error, authData) {
-        //         if (error) {
-        //             console.log(error);
-        //         } else {
-        //             localStorage["user"] = authData.uid;
-        //             user.currentUser = authData.uid;
-        //             console.log(authData.uid);
-        //         }
-        //     }, {
-        //         remember: "sessionOnly"
-        //     });
-        // }
         $scope.authObj = $firebaseAuth(ref);
         var authData1 = $scope.authObj.$getAuth();
         if (authData1) {
@@ -88,6 +80,8 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
                     user.currentUser = authData1.uid;
                     console.log(user.currentUser);
                 }
+            }, {
+                remember: 'sessionOnly'
             });
         }
     }])
@@ -97,7 +91,7 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             $scope.beans = response.data;
         });   
     }])
-    .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "$firebaseArray", "$firebaseObject", "$firebaseAuth", function($scope, $stateParams, $http, $filter, $firebaseArray, $firebaseObject, $firebaseAuth) {
+    .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "user", function($scope, $stateParams, $http, $filter, user) {
         $scope.iden = $stateParams.id;
         
         $scope.grinds = ["Whole Bean", "Espresso", "French Press", "Cone Drip", "Filter", "Flat Bottom filter"];
@@ -109,22 +103,16 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             $scope.bean = $filter("filter")(response.data, {
                 id: $scope.iden
             }, true)[0];
-        });
+        }); 
+        $scope.cartObject = {};
+        $scope.newItem = {
+            bean: bean,
+            price: price,
+            grind: $scope.cartObject.grind,
+            quantity: $scope.cartObject.quantity
+        };
         
-        
-        /*var users = ref.child('users');
-        $scope.users = $firebaseObject(users);
-        
-        $scope.authObject = $firebaseAuth(ref);
-        var authData = $scope.authObject.$getAuth();
-        
-        if (authData) {
-            $scope.userId = authData.uid;
-        }
-        ref.authAnonymously(function(error, authData) { console.log(authData.uid) }, {
-            remember: "sessionOnly"
-        });*/
-        
+        $scope.addToCart = user.addToCart($scope.newItem);
         
     }]);
     // .controller("CartCtrl", ["$scope", "$http", "$firebaseArray", "$firebaseObject", function($scope, $http, $firebaseArray, $firebaseObject) {
