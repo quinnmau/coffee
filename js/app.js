@@ -107,12 +107,10 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
         $scope.cartObject = {};
         $scope.newItem = {};
         $scope.getBeanAndPrice = function(bean, price) {
-            $scope.newItem.push({
-                bean = bean,
-                price = price,
-                grind: $scope.cartObject.grind,
-                quantity: $scope.cartObject.quantity
-            });
+            $scope.newItem['bean'] = bean;
+            $scope.newItem['price'] = price;
+            $scope.newItem['grind'] = $scope.cartObject.grind;
+            $scope.newItem['quantity'] = $scope.cartObject.quantity;
             console.log($scope.newItem);
         };
         $scope.addToCart = user.addToCart($scope.newItem);
