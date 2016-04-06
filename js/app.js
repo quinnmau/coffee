@@ -105,18 +105,16 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             }, true)[0];
         }); 
         $scope.cartObject = {};
+        $scope.newItem = {};
         $scope.getBeanAndPrice = function(bean, price) {
-            $scope.cartObject.bean = bean,
-            $scope.cartObject.price = price
+            $scope.newItem.push({
+                bean = bean,
+                price = price,
+                grind: $scope.cartObject.grind,
+                quantity: $scope.cartObject.quantity
+            });
+            console.log($scope.newItem);
         };
-        
-        $scope.newItem = {
-            bean: $scope.cartObjectbean,
-            price: $scope.cartObject.price,
-            grind: $scope.cartObject.grind,
-            quantity: $scope.cartObject.quantity
-        };
-        
         $scope.addToCart = user.addToCart($scope.newItem);
         
     }]);
