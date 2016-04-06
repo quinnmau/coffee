@@ -34,6 +34,10 @@
 
 var myApp = angular.module('dawgApp', ['ngSanitize', 'ui.router', 'firebase']);
 
+myApp.service("user", function() {
+    this.currentUser = '';
+});
+
 myApp.config(function($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise("/");
         $stateProvider
@@ -54,21 +58,24 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
           templateUrl: "partials/order.html"
         });
     })
+    .controller("MainCtrl", ["user", "$firebaseAuth", function(user, $firebaseAuth) {
+        var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
+        
+        if (user.currentUser == '') {
+            ref.authAnonymously(function(error, authData) {
+                if (error) {
+                    console.log("Login Failed!", error);
+                } else {
+                    console.log(authData);
+                }
+            });
+        }
+    }])
     .controller("OrdersCtrl", ["$scope", "$http", function($scope, $http) {
        
         $http.get("data/products.json").then(function(response) {
             $scope.beans = response.data;
-        });  
-        
-        var ref = new Firebase("https://glaring-inferno-9704.firebaseio.com");
-        
-        ref.authAnonymously(function(error, authData) {
-            if (error) {
-                console.log("Login Failed!", error);
-            } else {
-                console.log("Authenticated successfully with payload:", authData);
-            }
-        }); 
+        });   
     }])
     .controller("BeanCtrl", ["$scope", "$stateParams", "$http", "$filter", "$firebaseArray", "$firebaseObject", "$firebaseAuth", function($scope, $stateParams, $http, $filter, $firebaseArray, $firebaseObject, $firebaseAuth) {
         $scope.iden = $stateParams.id;
